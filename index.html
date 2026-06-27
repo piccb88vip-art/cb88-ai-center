@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLICKBET88 AI Center</title>
+  <link rel="icon" href="https://plcl.me/images/A3XC9.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <section id="landing" class="landing screen active">
+    <div class="lighting"></div>
+    <div class="landing-card">
+      <img class="brand-logo" src="https://plcl.me/images/A3XC9.png" alt="CLICKBET88" />
+      <div class="eyebrow">WORLD CUP 2026 • SMART PREDICTOR</div>
+      <h1>CLICKBET88<br><span>AI CENTER</span></h1>
+      <p>Bingung mau pegang tim mana? Tenang, AI CLICKBET88 siap nge-scan match buat lu.</p>
+      <button id="enterBtn" class="primary-btn">GAS MASUK AI</button>
+    </div>
+  </section>
+
+  <section id="boot" class="boot screen">
+    <div class="boot-bg"></div>
+    <div class="boot-shell">
+      <header class="boot-head">
+        <div>
+          <span class="small-red">CLICKBET88 AI ENGINE</span>
+          <h2>SYSTEM INITIALIZING</h2>
+        </div>
+        <div class="boot-percent" id="bootPercent">0%</div>
+      </header>
+
+      <div class="hud-grid">
+        <aside class="hud-panel left">
+          <div class="hud-box"><span>SYSTEM STATUS</span><b id="hudStatus">BOOTING</b></div>
+          <div class="hud-box"><span>AI CORE</span><b id="hudCore">STANDBY</b></div>
+          <div class="hud-box"><span>DATABASE</span><b id="hudDb">WAITING</b></div>
+          <div class="mini-bars"><i></i><i></i><i></i><i></i><i></i></div>
+        </aside>
+
+        <main class="robot-stage">
+          <div class="scan-ring ring-a"></div>
+          <div class="scan-ring ring-b"></div>
+          <div class="scan-ring ring-c"></div>
+          <div class="robot-core">
+            <div class="robot-head">
+              <div class="antenna"></div>
+              <div class="eye left-eye"></div>
+              <div class="eye right-eye"></div>
+              <div class="mouth"></div>
+            </div>
+            <div class="robot-body"><span></span></div>
+          </div>
+          <div class="scan-line"></div>
+        </main>
+
+        <aside class="hud-panel right">
+          <div class="hud-box"><span>DATA STREAM</span><b id="hudStream">OFFLINE</b></div>
+          <div class="hud-box"><span>NEURAL NET</span><b id="hudNeural">LOADING</b></div>
+          <div class="hud-box"><span>PREDICTOR</span><b id="hudPredictor">LOCKED</b></div>
+          <div class="wave-bars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </aside>
+      </div>
+
+      <div class="boot-bottom">
+        <div class="progress"><span id="bootBar"></span></div>
+        <div class="boot-text" id="bootText">Nyalain mesin AI dulu, bro...</div>
+      </div>
+    </div>
+  </section>
+
+  <main id="app" class="app screen">
+    <nav class="nav">
+      <div class="brand"><img src="https://plcl.me/images/A3XC9.png" alt="CB88"><div><b>CLICKBET88</b><small>AI PREDICTION CENTER</small></div></div>
+      <a class="login-btn" href="https://click-lynk.com/CLICKBET88_WL" target="_blank">LOGIN CB88</a>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="pill">GEN Z MATCH SCANNER</span>
+        <h1>Prediksi Bola,<br><span>Gak Pake Bingung.</span></h1>
+        <p>AI CLICKBET88 baca match, odds, momentum, terus kasih prediksi skor yang paling masuk akal.</p>
+      </div>
+    </section>
+
+    <section class="stats-row">
+      <div><b id="totalMatch">0</b><span>Total Match</span></div>
+      <div><b>AI</b><span>Local Engine</span></div>
+      <div><b>24/7</b><span>Ready Scan</span></div>
+      <div><b>CB88</b><span>Official Mode</span></div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span>🔥 MATCH HARI INI</span><button id="refreshBtn">Refresh</button></div>
+      <div id="matchGrid" class="match-grid"></div>
+    </section>
+  </main>
+
+  <div id="predictModal" class="modal hidden">
+    <div class="modal-card">
+      <button id="closeModal" class="close">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/particle.js"></script>
+  <script src="js/typing.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
