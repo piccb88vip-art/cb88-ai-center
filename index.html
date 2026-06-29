@@ -483,7 +483,7 @@ function getAllowedTeamType(league){
 function validateMatchInput(a,b,league){
   if(!a||!b){showSmartError('Tim Utama Dan Tim Lawan Wajib Diisi Bro.');return null}
   const teamA=getTeamData(a), teamB=getTeamData(b);
-  if(!teamA||!teamB){showSmartError('Tim tidak ditemukan pada database AI.<br>Silakan pilih dari daftar yang tersedia.');return null}
+  if(!teamA||!teamB){showSmartError('Match yang kamu pilih tidak valid.<br>⚽ Coba pilih tim yang benar, terus Generate AI lagi ya! 🚀');return null}
   if(normalizeTeamName(teamA[0])===normalizeTeamName(teamB[0])){showSmartError('Tidak mungkin tim bermain melawan dirinya sendiri.<br>Silakan pilih lawan yang berbeda.');return null}
   const allowedType=getAllowedTeamType(league);
   if(allowedType && (teamA[1]!==allowedType || teamB[1]!==allowedType)){
