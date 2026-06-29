@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -285,6 +286,18 @@
       .go-cta a{height:38px!important;padding:0 20px!important;font-size:12px!important;}
     }
 
+
+    /* SMART VALIDATION POPUP - hanya tambahan validasi, tidak mengubah tampilan utama */
+    .smart-error-modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(1,5,16,.78);backdrop-filter:blur(12px)}
+    .smart-error-modal.active{display:flex}
+    .smart-error-box{width:min(390px,100%);position:relative;padding:26px 22px 22px;border-radius:24px;border:1px solid rgba(255,36,56,.62);background:linear-gradient(145deg,rgba(5,12,32,.98),rgba(12,18,43,.96));box-shadow:0 30px 90px rgba(0,0,0,.70),0 0 55px rgba(255,36,56,.20),inset 0 0 0 1px rgba(255,255,255,.04);text-align:center;animation:smartPop .22s ease}
+    .smart-error-icon{width:64px;height:64px;margin:0 auto 13px;border-radius:50%;display:grid;place-items:center;font-size:31px;background:linear-gradient(135deg,rgba(255,36,56,.22),rgba(29,116,255,.14));border:1px solid rgba(255,36,56,.45);box-shadow:0 0 30px rgba(255,36,56,.25)}
+    .smart-error-title{font-size:24px;font-weight:900;color:#ff5065;letter-spacing:.02em;margin-bottom:5px;text-transform:uppercase}
+    .smart-error-no{font-size:20px;font-weight:900;color:#fff;margin-bottom:10px}
+    .smart-error-text{font-size:14px;line-height:1.55;color:#dce6ff;margin:0 auto 18px;max-width:310px}
+    .smart-error-btn{height:44px;min-width:138px;border:0;border-radius:999px;cursor:pointer;color:#fff;font-weight:900;font-size:14px;background:linear-gradient(135deg,var(--red),#d90828 45%,var(--blue));box-shadow:0 12px 30px rgba(255,36,56,.25),0 0 22px rgba(29,116,255,.16)}
+    @keyframes smartPop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+
   </style>
 </head>
 <body>
@@ -424,6 +437,17 @@
   </div>
 </div>
 
+
+<div class="smart-error-modal" id="smartErrorModal">
+  <div class="smart-error-box">
+    <div class="smart-error-icon">🚫</div>
+    <div class="smart-error-title">Data Tidak Sesuai</div>
+    <div class="smart-error-no">No, No yaa !</div>
+    <div class="smart-error-text" id="smartErrorText">Silakan pilih pertandingan yang valid.</div>
+    <button class="smart-error-btn" id="smartErrorBtn" type="button">OK</button>
+  </div>
+</div>
+
 <script>
 const LOGIN_URL = "https://click-lynk.com/CLICKBET88_WL";
 const TEAMS = [
@@ -443,13 +467,37 @@ if(mobileGenerateOpen) mobileGenerateOpen.onclick = openPredictorPanel;
 if(formCloseBtn) formCloseBtn.onclick = closePredictorPanel;
 $('#switchBtn').onclick=()=>{const a=$('#teamA').value;$('#teamA').value=$('#teamB').value;$('#teamB').value=a};document.querySelectorAll('[data-clear]').forEach(b=>b.onclick=()=>{$('#'+b.dataset.clear).value='';$('#'+b.dataset.clear).focus()});
 function setupSuggest(inputId, boxId){const input=$('#'+inputId), box=$('#'+boxId);input.addEventListener('input',()=>renderSuggest(input,box));input.addEventListener('focus',()=>renderSuggest(input,box));document.addEventListener('click',e=>{if(!input.parentElement.contains(e.target)) box.classList.remove('show')});}
-function renderSuggest(input,box){const q=input.value.toLowerCase().trim();if(!q){box.classList.remove('show');return}const list=TEAMS.filter(t=>t[0].toLowerCase().includes(q)).slice(0,8);if(!list.length){box.classList.remove('show');return}box.innerHTML=list.map(t=>`<button type="button" data-v="${t[0]}"><span><span>${t[2]}</span> <span class="name">${t[0]}</span></span><small>${t[1]}</small></button>`).join('');box.classList.add('show');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{input.value=b.dataset.v;box.classList.remove('show')});}
+function renderSuggest(input,box){const q=input.value.toLowerCase().trim();if(!q){box.classList.remove('show');return}const otherInput=input.id==='teamA'?$('#teamB'):$('#teamA');const otherValue=(otherInput?.value||'').toLowerCase().trim();const list=TEAMS.filter(t=>t[0].toLowerCase().includes(q)&&t[0].toLowerCase()!==otherValue).slice(0,8);if(!list.length){box.classList.remove('show');return}box.innerHTML=list.map(t=>`<button type="button" data-v="${t[0]}"><span><span>${t[2]}</span> <span class="name">${t[0]}</span></span><small>${t[1]}</small></button>`).join('');box.classList.add('show');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{input.value=b.dataset.v;box.classList.remove('show')});}
 setupSuggest('teamA','suggestA');setupSuggest('teamB','suggestB');
+function normalizeTeamName(name){return (name||'').trim().replace(/\s+/g,' ').toLowerCase()}
+function getTeamData(name){const key=normalizeTeamName(name);return TEAMS.find(t=>normalizeTeamName(t[0])===key)||null}
+function showSmartError(message){const modal=$('#smartErrorModal'), text=$('#smartErrorText');if(text)text.innerHTML=message||'Silakan pilih pertandingan yang valid.';if(modal)modal.classList.add('active')}
+function closeSmartError(){const modal=$('#smartErrorModal');if(modal)modal.classList.remove('active')}
+$('#smartErrorBtn')?.addEventListener('click',closeSmartError);
+$('#smartErrorModal')?.addEventListener('click',e=>{if(e.target.id==='smartErrorModal')closeSmartError()});
+function getAllowedTeamType(league){
+  if(['FIFA World Cup 2026','International Friendly'].includes(league)) return 'Negara';
+  if(['UEFA Champions League','Premier League','La Liga','Serie A','Bundesliga','Ligue 1','AFC Champions League','MLS','Brasileirão Serie A','Liga 1 Indonesia'].includes(league)) return 'Club';
+  return null;
+}
+function validateMatchInput(a,b,league){
+  if(!a||!b){showSmartError('Tim Utama Dan Tim Lawan Wajib Diisi Bro.');return null}
+  const teamA=getTeamData(a), teamB=getTeamData(b);
+  if(!teamA||!teamB){showSmartError('Tim tidak ditemukan pada database AI.<br>Silakan pilih dari daftar yang tersedia.');return null}
+  if(normalizeTeamName(teamA[0])===normalizeTeamName(teamB[0])){showSmartError('Tidak mungkin tim bermain melawan dirinya sendiri.<br>Silakan pilih lawan yang berbeda.');return null}
+  const allowedType=getAllowedTeamType(league);
+  if(allowedType && (teamA[1]!==allowedType || teamB[1]!==allowedType)){
+    const label=allowedType==='Negara'?'Tim Nasional':'Club Sepak Bola';
+    showSmartError(`${league} hanya boleh memilih ${label}.<br>Jangan campur Negara dengan Club.`);return null
+  }
+  return {a:teamA[0],b:teamB[0]};
+}
+
 function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return Math.abs(h)}
 function getPower(name){return teamPower[name] || teamPower[name.replace(/ /g,'_')] || (62 + (hash(name)%27));}
 function predict(a,b,league){let pa=getPower(a), pb=getPower(b);const seed=hash(a+b+league);pa += (seed%7)-3; pb += ((seed>>3)%7)-3;let diff=pa-pb;let draw=Math.max(18,Math.min(31,26-Math.abs(diff)*.45));let aw= Math.max(16,Math.min(70,50+diff*1.8-draw/3));let bw= Math.max(16,Math.min(70,100-aw-draw));let sum=aw+bw+draw;aw=Math.round(aw/sum*100);bw=Math.round(bw/sum*100);draw=100-aw-bw;let winner= aw>=bw && aw>=draw ? a : bw>=aw && bw>=draw ? b : 'Seri';let risk=Math.abs(aw-bw)<7?'High':Math.abs(aw-bw)<16?'Medium':'Low';let conf=Math.max(44,Math.min(88,Math.max(aw,bw,draw)));let scoreA= diff>15?3: diff>3?2: diff<-10?1:2;let scoreB= diff<-15?3: diff<-3?2:diff>10?0:1;if(winner==='Seri'){scoreA=scoreB=(seed%2)+1}let oddA=(100/Math.max(18,aw)*0.88).toFixed(2);let oddD=(100/Math.max(18,draw)*0.92).toFixed(2);let oddB=(100/Math.max(18,bw)*0.88).toFixed(2);let over=(scoreA+scoreB>=3)?'Over 2.5 Goals':'Under 3.5 Goals';let dc= winner===a?'1X':winner===b?'X2':'1X / X2';let marketWin=winner==='Seri'?'Draw / Double Chance':`${winner} Win`;return {a,b,league,winner,aw,bw,draw,conf,risk,scoreA,scoreB,oddA,oddD,oddB,over,dc,marketWin};}
 const tasks = ['Menghubungkan AI Engine','Mengambil data pertandingan','Menganalisa performa tim','Membaca head to head','Menghitung probabilitas menang','Menyusun prediksi terbaik'];
-$('#generateBtn').onclick=()=>{const a=$('#teamA').value.trim(), b=$('#teamB').value.trim();if(!a||!b){alert('Tim A Dan Tim B Wajib Diisi Bro.');return}closePredictorPanel();runLoading(predict(a,b,$('#league').value));}
+$('#generateBtn').onclick=()=>{const a=$('#teamA').value.trim(), b=$('#teamB').value.trim(), league=$('#league').value;const valid=validateMatchInput(a,b,league);if(!valid)return;$('#teamA').value=valid.a;$('#teamB').value=valid.b;closePredictorPanel();runLoading(predict(valid.a,valid.b,league));}
 function runLoading(data){openModal('loadingModal');$('#taskList').innerHTML=tasks.map(t=>`<div class="task"><span>${t}</span><b>Menunggu</b></div>`).join('');$('#progressBar').style.width='0%';$('#percentText').textContent='0%';let i=0,p=0;const els=[...document.querySelectorAll('#taskList .task')];const int=setInterval(()=>{p+=Math.floor(8+Math.random()*10);if(p>100)p=100;$('#progressBar').style.width=p+'%';$('#percentText').textContent=p+'%';let done=Math.min(els.length-1,Math.floor(p/18));els.forEach((el,idx)=>{const b=el.querySelector('b'); if(idx<done){el.classList.add('done');b.textContent='Selesai';} else if(idx===done){b.innerHTML='<span class="spinner"></span>'} else {b.textContent='Menunggu';}});if(p>=100){clearInterval(int);setTimeout(()=>{closeModal('loadingModal');renderResult(data);openModal('resultModal');$('#landingCta').classList.add('show');},450)}},420)}
 function renderResult(d){
   const winnerText = d.winner==='Seri' ? 'Potensi Seri' : d.winner + ' Menang';
